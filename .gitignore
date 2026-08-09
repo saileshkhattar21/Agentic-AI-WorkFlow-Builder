@@ -1,0 +1,21 @@
+# secrets - never commit
+**/.secrets
+.env
+.env.local
+
+# dependencies
+node_modules/
+**/node_modules/
+
+# nhost local runtime data
+.nhost/
+nhost/.nhost/
+
+# build output
+.next/
+dist/
+build/
+
+# OS/editor junk
+.DS_Store
+*.swp
