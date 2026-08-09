@@ -1,6 +1,28 @@
-actions: []
+actions:
+  - name: approveStep
+    definition:
+      kind: synchronous
+      handler: 'https://local.functions.local.nhost.run/triggerWorkflowRun'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: user
+  - name: triggerWorkflowRun
+    definition:
+      kind: synchronous
+      handler: 'https://local.functions.local.nhost.run/triggerWorkflowRun'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: user
 custom_types:
   enums: []
   input_objects: []
-  objects: []
+  objects:
+    - name: TriggerWorkflowRunOutput
+    - name: ApproveStepOutput
   scalars: []
