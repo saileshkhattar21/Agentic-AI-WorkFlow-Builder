@@ -101,3 +101,5 @@ select
   round((o.quota_used::numeric / nullif(o.quota_limit, 0)) * 100, 2) as usage_percent,
   o.quota_period_start
 from organizations o;
+
+

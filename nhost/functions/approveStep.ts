@@ -42,18 +42,20 @@ export default async (req: Request, res: Response) => {
     return res.status(409).json({ message: `Step is not awaiting approval (status: ${sr.step_runs_by_pk.status})` });
   }
 
+  const now = new Date().toISOString();
+
   if (decision === "rejected") {
-    await adminGraphQL(
-      `mutation Reject($id: uuid!, $userId: uuid!) {
-        update_step_runs_by_pk(pk_columns: { id: $id }, _set: { status: "failed", approved_by: $userId, approved_at: "now()" }) { id }
+await adminGraphQL(
+      `mutation Reject($id: uuid!, $userId: uuid!, $now: timestamptz!) {
+        update_step_runs_by_pk(pk_columns: { id: $id }, _set: { status: "failed", approved_by: $userId, approved_at: $now }) { id }
       }`,
-      { id: stepRunId, userId }
+      { id: stepRunId, userId, now }
     );
     await adminGraphQL(
-      `mutation FailRun($id: uuid!) {
-        update_workflow_runs_by_pk(pk_columns: { id: $id }, _set: { status: "failed", completed_at: "now()" }) { id }
+      `mutation FailRun($id: uuid!, $now: timestamptz!) {
+        update_workflow_runs_by_pk(pk_columns: { id: $id }, _set: { status: "failed", completed_at: $now }) { id }
       }`,
-      { id: workflowRunId }
+      { id: workflowRunId, now }
     );
     return res.status(200).json({ workflow_run_id: workflowRunId, status: "failed" });
   }
@@ -66,12 +68,12 @@ export default async (req: Request, res: Response) => {
     `query Order($id: uuid!) { step_runs_by_pk(id: $id) { workflow_step { step_order } } }`,
     { id: stepRunId }
   );
-
-  await adminGraphQL(
-    `mutation Approve($id: uuid!, $userId: uuid!, $output: jsonb) {
-      update_step_runs_by_pk(pk_columns: { id: $id }, _set: { status: "success", approved_by: $userId, approved_at: "now()", output: $output }) { id }
+  const approvedAt = new Date().toISOString();
+await adminGraphQL(
+    `mutation Approve($id: uuid!, $userId: uuid!, $output: jsonb, $approvedAt: timestamptz!) {
+      update_step_runs_by_pk(pk_columns: { id: $id }, _set: { status: "success", approved_by: $userId, approved_at: $approvedAt, output: $output }) { id }
     }`,
-    { id: stepRunId, userId, output: sr.step_runs_by_pk.output }
+    { id: stepRunId, userId, output: sr.step_runs_by_pk.output, approvedAt }
   );
   await adminGraphQL(
     `mutation ResumeRun($id: uuid!) {

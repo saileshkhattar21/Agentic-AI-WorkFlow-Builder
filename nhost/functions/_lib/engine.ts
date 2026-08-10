@@ -64,7 +64,7 @@ export async function runSteps(opts: {
           previousOutput = { text: output };
           externalCallsThisSegment++;
           await finishStepRun(stepRunId, "success", previousOutput, null);
-          currentOrder = step.step_order + 1;
+          currentOrder = step.config?.next ?? step.step_order + 1;
           break;
         }
 
@@ -74,7 +74,7 @@ export async function runSteps(opts: {
           previousOutput = output;
           externalCallsThisSegment++;
           await finishStepRun(stepRunId, "success", previousOutput, null);
-          currentOrder = step.step_order + 1;
+          currentOrder = step.config?.next ?? step.step_order + 1;
           break;
         }
 
@@ -82,7 +82,7 @@ export async function runSteps(opts: {
           const output = await runDbWrite(step.config, previousOutput);
           previousOutput = output;
           await finishStepRun(stepRunId, "success", previousOutput, null);
-          currentOrder = step.step_order + 1;
+          currentOrder = step.config?.next ?? step.step_order + 1;
           break;
         }
 

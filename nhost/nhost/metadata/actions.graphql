@@ -11,6 +11,13 @@ type Mutation {
   ): TriggerWorkflowRunOutput
 }
 
+type Mutation {
+  triggerWorkflowWebhook(
+    workflow_id: uuid!
+    secret: String!
+  ): TriggerWorkflowRunOutput
+}
+
 type TriggerWorkflowRunOutput {
   workflow_run_id: uuid!
   status: String!

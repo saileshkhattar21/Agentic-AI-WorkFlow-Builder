@@ -1,28 +1,32 @@
 // nhost/functions/_lib/llm.ts
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY!;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const GROQ_API_KEY = process.env.GROQ_API_KEY!;
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
 export async function callGemini(prompt: string): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-
-  const res = await fetch(url, {
+  // Function name kept as callGemini to avoid touching engine.ts's import —
+  // it's calling Groq under the hood now.
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
+      model: GROQ_MODEL,
+      messages: [{ role: "user", content: prompt }],
     }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Gemini API error ${res.status}: ${body}`);
+    throw new Error(`Groq API error ${res.status}: ${body}`);
   }
 
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text = data.choices?.[0]?.message?.content;
   if (typeof text !== "string") {
-    throw new Error("Gemini response missing text: " + JSON.stringify(data));
+    throw new Error("Groq response missing text: " + JSON.stringify(data));
   }
   return text;
 }
