@@ -6,14 +6,13 @@ A mini n8n-style workflow automation tool for chaining AI agent steps, built on 
 
 ## Live deployment
 
-- **Frontend (Vercel):** `<PASTE YOUR VERCEL URL HERE>`
+- **Frontend (Vercel):** `https://agentic-ai-work-flow-builder-zoog.vercel.app/
 - **Backend (nhost Cloud):**
   - GraphQL API: `https://teclrxnympfptmrgiqfm.hasura.ap-south-1.nhost.run/v1/graphql`
   - Hasura Console: `https://teclrxnympfptmrgiqfm.hasura.ap-south-1.nhost.run/console`
   - Auth API: `https://teclrxnympfptmrgiqfm.auth.ap-south-1.nhost.run/v1`
   - Functions: `https://teclrxnympfptmrgiqfm.functions.ap-south-1.nhost.run/v1`
 - **Region:** ap-south-1 (Mumbai)
-- **Hasura admin secret:** `nhost-admin-secret`
 
 ---
 
